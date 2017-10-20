@@ -5,6 +5,7 @@ $fc = array(
 );
 
 $fh = fopen(dirname(__DIR__) . '/raw/activity-center.csv', 'r');
+fgetcsv($fh, 2048);
 while($line = fgetcsv($fh, 2048)) {
   foreach($line AS $k => $v) {
     $line[$k] = mb_convert_encoding($v, 'utf-8', 'big5');
@@ -19,7 +20,7 @@ while($line = fgetcsv($fh, 2048)) {
     ),
     'geometry' => array(
       'type' => 'Point',
-      'coordinates' => array($line[5], $line[4]),
+      'coordinates' => array(floatval($line[5]), floatval($line[4])),
     ),
   );
   $fc['features'][] = $f;
