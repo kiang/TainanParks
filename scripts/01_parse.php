@@ -1,15 +1,17 @@
 <?php
+$xmlFile = dirname(__DIR__) . '/raw/park.xml';
+$client = new SoapClient('http://60.249.237.10/Service/PARKtoXMLService2.asmx?WSDL');
+file_put_contents($xmlFile, $client->GetParktoXML()->GetParktoXMLResult);
+
 $headerDone = false;
 $fc = array(
   'type' => 'FeatureCollection',
   'features' => array(),
 );
 $fh = fopen(dirname(__DIR__) . '/raw/parks.csv', 'w');
-$base = file_get_contents(dirname(__DIR__) . '/raw/park.xml');
+$base = file_get_contents($xmlFile);
 $parks = explode('</TainanParkData>', $base);
 foreach($parks AS $park) {
-  $pos = strpos($park, '<縣市>');
-  $park = substr($park, $pos);
   $lines = explode("\n", $park);
   $parkData = $properties = array();
   $fieldCount = 0;
