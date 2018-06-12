@@ -56,6 +56,22 @@ var layerYellow = new ol.style.Style({
   })
 });
 
+var layerBrown = new ol.style.Style({
+  image: new ol.style.RegularShape({
+    fill: new ol.style.Fill({
+        color: 'rgba(165,42,42,0.6)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,0.3)',
+        width: 2
+    }),
+    points: 6,
+    radius: 10,
+    radius2: 4,
+    angle: 0
+  })
+});
+
 var projection = ol.proj.get('EPSG:3857');
 var projectionExtent = projection.getExtent();
 var size = ol.extent.getWidth(projectionExtent) / 256;
@@ -117,6 +133,14 @@ var ac = new ol.layer.Vector({
     style: layerYellow
 });
 
+var school = new ol.layer.Vector({
+    source: new ol.source.Vector({
+        url: 'school.json',
+        format: new ol.format.GeoJSON()
+    }),
+    style: layerBrown
+});
+
 var appView = new ol.View({
   center: ol.proj.fromLonLat([120.301507, 23.124694]),
   zoom: 11
@@ -125,7 +149,7 @@ var appView = new ol.View({
 var map = new ol.Map({
   layers: [new ol.layer.Tile({
             source: new ol.source.OSM()
-          }), parks, ac],
+          }), parks, ac, school],
   overlays: [popup],
   target: 'map',
   view: appView,
