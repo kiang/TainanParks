@@ -125,6 +125,130 @@ var parks = new ol.layer.Vector({
     style: layerGreen
 });
 
+var cunliColors = {
+  y: new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(200,200,0,0.3)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,1)',
+        width: 1
+    })
+  }),
+  r: new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(200,0,0,0.3)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,1)',
+        width: 1
+    })
+  }),
+  g: new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(0,200,0,0.3)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,1)',
+        width: 1
+    })
+  }),
+  b: new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(0,0,200,0.3)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,1)',
+        width: 1
+    })
+  }),
+  c: new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(200,0,200,0.3)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'rgba(0,0,0,1)',
+        width: 1
+    })
+  })
+};
+
+var cunli = new ol.layer.Vector({
+    source: new ol.source.Vector({
+        url: 'cunli.json',
+        format: new ol.format.GeoJSON()
+    }),
+    style: function(f) {
+      switch(f.get('VILLCODE')) {
+        case '67000340032':
+        case '67000340008':
+        case '67000340007':
+        case '67000340004':
+        case '67000340019':
+        case '67000340044':
+        case '67000340045':
+        case '67000340005':
+        case '67000340001':
+        return cunliColors.y;
+        break;
+        case '67000340039':
+        case '67000340046':
+        case '67000340023':
+        case '67000340048':
+        case '67000340049':
+        case '67000340047':
+        case '67000340020':
+        case '67000340040':
+        case '67000340053':
+        case '67000340052':
+        case '67000340024':
+        return cunliColors.c;
+        break;
+        case '67000340025':
+        case '67000340056':
+        case '67000340041':
+        case '67000340055':
+        case '67000370033':
+        case '67000370034':
+        case '67000340026':
+        case '67000340043':
+        case '67000340042':
+        case '67000340018':
+        case '67000370025':
+        return cunliColors.r;
+        break;
+        case '67000370048':
+        case '67000370045':
+        case '67000370031':
+        case '67000370046':
+        case '67000370047':
+        case '67000370054':
+        case '67000370044':
+        case '67000370043':
+        case '67000370022':
+        case '67000370054':
+        case '67000340054':
+        return cunliColors.g;
+        break;
+        case '67000340050':
+        case '67000340033':
+        case '67000340051':
+        case '67000370005':
+        case '67000370039':
+        case '67000370040':
+        case '67000370016':
+        case '67000370011':
+        case '67000370009':
+        case '67000370007':
+        case '67000370041':
+        case '67000370042':
+        case '':
+        return cunliColors.b;
+        break;
+      }
+    }
+});
+
 var ac = new ol.layer.Vector({
     source: new ol.source.Vector({
         url: 'ac.json',
@@ -142,14 +266,14 @@ var school = new ol.layer.Vector({
 });
 
 var appView = new ol.View({
-  center: ol.proj.fromLonLat([120.301507, 23.124694]),
-  zoom: 11
+  center: ol.proj.fromLonLat([120.19061375048825, 23.00687226736852]),
+  zoom: 14
 });
 
 var map = new ol.Map({
   layers: [new ol.layer.Tile({
             source: new ol.source.OSM()
-          }), parks, ac, school],
+          }), parks, ac, cunli],
   overlays: [popup],
   target: 'map',
   view: appView,
