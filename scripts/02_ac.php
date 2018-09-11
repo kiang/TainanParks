@@ -7,9 +7,6 @@ $fc = array(
 $fh = fopen(dirname(__DIR__) . '/raw/activity-center.csv', 'r');
 fgetcsv($fh, 2048);
 while($line = fgetcsv($fh, 2048)) {
-  foreach($line AS $k => $v) {
-    $line[$k] = mb_convert_encoding($v, 'utf-8', 'big5');
-  }
   $f = array(
     'type' => 'Feature',
     'properties' => array(
