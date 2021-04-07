@@ -1,5 +1,12 @@
 <?php
-$xmlFile = dirname(__DIR__) . '/raw/park.xml';
+$basePath = dirname(__DIR__);
+$parkInfo = [];
+$fh = fopen($basePath . '/raw/park-info.csv', 'r');
+fgetcsv($fh, 2048);
+while($line = fgetcsv($fh, 2048)) {
+  $parkInfo[$line[7] . $line[1]] = $line;
+}
+$xmlFile = $basePath . '/raw/park.xml';
 $client = new SoapClient('http://60.249.237.10/Service/PARKtoXMLService2.asmx?WSDL');
 file_put_contents($xmlFile, $client->GetParktoXML()->GetParktoXMLResult);
 
@@ -8,7 +15,7 @@ $fc = array(
   'type' => 'FeatureCollection',
   'features' => array(),
 );
-$fh = fopen(dirname(__DIR__) . '/raw/parks.csv', 'w');
+$fh = fopen($basePath . '/raw/parks.csv', 'w');
 $base = file_get_contents($xmlFile);
 $parks = explode('</TainanParkData>', $base);
 foreach($parks AS $park) {
@@ -34,10 +41,26 @@ foreach($parks AS $park) {
       }
     }
   }
+  $infoKey = '';
+  if(isset($properties['區'])) {
+    $infoKey = $properties['區'] . $properties['公園名稱'];
+  }
   if(isset($properties['設施'])) {
     $properties['設施'] = implode("\n", $properties['設施']);
   }
-  if(!empty($parkData['經緯度_X'])) {
+  if(isset($parkInfo[$infoKey])) {
+    $properties['經緯度_X'] = $parkData['經緯度_X'] = $parkInfo[$infoKey][8];
+    $properties['經緯度_Y'] = $parkData['經緯度_Y'] = $parkInfo[$infoKey][9];
+    $f = array(
+      'type' => 'Feature',
+      'properties' => $properties,
+      'geometry' => array(
+        'type' => 'Point',
+        'coordinates' => array($parkInfo[$infoKey][8], $parkInfo[$infoKey][9]),
+      ),
+    );
+    $fc['features'][] = $f;
+  } elseif(!empty($parkData['經緯度_X'])) {
     $p = twd97_to_latlng($parkData['經緯度_X'], $parkData['經緯度_Y']);
     $properties['經緯度_X'] = $parkData['經緯度_X'] = $p['lng'];
     $properties['經緯度_Y'] = $parkData['經緯度_Y'] = $p['lat'];
@@ -58,7 +81,7 @@ foreach($parks AS $park) {
   fputcsv($fh, $parkData);
 }
 
-file_put_contents(dirname(__DIR__) . '/parks.json', json_encode($fc));
+file_put_contents($basePath . '/parks.json', json_encode($fc));
 
 function twd97_to_latlng($x, $y) {
     $a = 6378137.0;
